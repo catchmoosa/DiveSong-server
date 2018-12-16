@@ -27,7 +27,7 @@ create table authenticate(
 
 create table albums(
 	album_id	bigint primary key auto_increment,
-	name		varchar(255) not null,
+	name	 varchar(255) not null unique,
 	rdate		date,
 	num_tracks	int,
 	check (num_tracks>0)
@@ -36,30 +36,31 @@ create table albums(
 create table track(
 	tid		bigint	primary key	auto_increment,
 	name		varchar(255),
-	tpath		varchar(511),
+	tpath		varchar(511) unique,
+	imgpath	varchar(511) unique,
 	album_id	bigint,
+	aname		varchar(511),
 	artists		varchar(511),
 	genre		varchar(255),
-	lang		varchar(255),
 	track_no	int,
 	duration	bigint,
 	bitrate		bigint,
+	exist		bigint,
 	foreign key (album_id) references albums(album_id)
 );
-	
+
 create table thistory(
-	tid		bigint primary key,
+	tid		bigint,
 	lplayed		datetime,
 	foreign key (tid) references track(tid)
-);	
+);
 
 create view search as select
 	track.artists	as artists,
 	track.genre	as genre,
 	albums.name	as album_name,
-	track.lang	as lang,
 	track.name	as name
-	from track left join albums 
+	from track left join albums
 	on track.album_id=albums.album_id;
 
 create table req_list(
@@ -93,4 +94,3 @@ create table uhistory(
 	foreign key (uid) references users(uid),
 	check (to_oper>=0 and to_oper<=2)
 );
-
